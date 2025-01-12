@@ -21,14 +21,9 @@ pub type ParserError = Box<dyn Error>;
 #[tokio::main]
 pub async fn feed_parser(url: &str) -> Result<Vec<Entry>, ParserError> {
     match read_feed(url).await {
-        Ok(entries) => Ok(sort_entries(entries)),
+        Ok(entries) => Ok(entries),
         Err(error) => Err(error),
     }
-}
-
-fn sort_entries(mut entries: Vec<Entry>) -> Vec<Entry> {
-    entries.sort_by(|a, b| a.updated.cmp(&b.updated));
-    entries
 }
 
 fn empty_entry() -> Entry {

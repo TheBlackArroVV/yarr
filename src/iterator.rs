@@ -22,5 +22,10 @@ pub fn iterator() -> Vec<Entry> {
         }
     }
 
-    all_entries
+    sort_entries(all_entries)
+}
+
+fn sort_entries(mut entries: Vec<Entry>) -> Vec<Entry> {
+    entries.sort_by(|a, b| a.updated.cmp(&b.updated));
+    entries
 }
