@@ -6,28 +6,29 @@ use serde::Deserialize;
 use std::error::Error;
 
 #[derive(Debug, Deserialize)]
-struct Entry {
-    title: String,
-    link: String,
-    updated: String,
-    author: Author
+pub struct Entry {
+    pub title: String,
+    pub link: String,
+    pub updated: String,
+    pub author: Author
 }
 
 #[derive(Debug, Deserialize)]
-struct Author {
-    name: String
+pub struct Author {
+    pub name: String
 }
 
 #[tokio::main]
-pub async fn main() {
+pub async fn main() -> Result<Vec<Entry>, Box<dyn Error>> {
     match read_feed(TEST_RSS_LINK).await {
-        Ok(entries) => {
-            for entry in entries {
-                println!("{:?}", entry);
-            }
-        }
-        Err(e) => eprintln!("Error: {}", e),
+        Ok(entries) => Ok(sort_entries(entries)),
+        Err(error) => Err(error),
     }
+}
+
+fn sort_entries(mut entries: Vec<Entry>) -> Vec<Entry> {
+    entries.sort_by(|a, b| a.updated.cmp(&b.updated));
+    entries
 }
 
 fn empty_entry() -> Entry {
