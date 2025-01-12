@@ -1,5 +1,3 @@
-const TEST_RSS_LINK: &str = "https://world.hey.com/dhh/feed.atom";
-
 use quick_xml::Reader;
 use quick_xml::events::Event;
 use serde::Deserialize;
@@ -18,17 +16,14 @@ pub struct Author {
     pub name: String
 }
 
+pub type ParserError = Box<dyn Error>;
+
 #[tokio::main]
-pub async fn main() -> Result<Vec<Entry>, Box<dyn Error>> {
-    match read_feed(TEST_RSS_LINK).await {
-        Ok(entries) => Ok(sort_entries(entries)),
+pub async fn feed_parser(url: &str) -> Result<Vec<Entry>, ParserError> {
+    match read_feed(url).await {
+        Ok(entries) => Ok(entries),
         Err(error) => Err(error),
     }
-}
-
-fn sort_entries(mut entries: Vec<Entry>) -> Vec<Entry> {
-    entries.sort_by(|a, b| a.updated.cmp(&b.updated));
-    entries
 }
 
 fn empty_entry() -> Entry {
@@ -42,7 +37,7 @@ fn empty_entry() -> Entry {
     }
 }
 
-async fn read_feed(url: &str) -> Result<Vec<Entry>, Box<dyn Error>> {
+async fn read_feed(url: &str) -> Result<Vec<Entry>, ParserError> {
     let response = reqwest::get(url).await?.text().await?;
     let mut reader = Reader::from_str(&response);
 
@@ -56,7 +51,7 @@ async fn read_feed(url: &str) -> Result<Vec<Entry>, Box<dyn Error>> {
     }
 }
 
-fn parse_entries(reader: &mut Reader<&[u8]>, entries: &mut Vec<Entry>) -> Option<Result<Vec<Entry>, Box<dyn Error>>> {
+fn parse_entries(reader: &mut Reader<&[u8]>, entries: &mut Vec<Entry>) -> Option<Result<Vec<Entry>, ParserError>> {
     let mut current_entry = empty_entry();
     let mut buf = Vec::new();
 
