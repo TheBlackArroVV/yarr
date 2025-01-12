@@ -1,3 +1,5 @@
+mod feed_parser;
+
 fn main() {
-    println!("Hello, world!");
+    feed_parser::main::main();
 }
