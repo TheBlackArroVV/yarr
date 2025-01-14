@@ -19,7 +19,7 @@ pub struct Author {
 pub type ParserError = Box<dyn Error>;
 
 #[tokio::main]
-pub async fn feed_parser(url: &str) -> Result<Vec<Entry>, ParserError> {
+pub async fn feed_parser(url: String) -> Result<Vec<Entry>, ParserError> {
     match read_feed(url).await {
         Ok(entries) => Ok(entries),
         Err(error) => Err(error),
@@ -37,7 +37,7 @@ fn empty_entry() -> Entry {
     }
 }
 
-async fn read_feed(url: &str) -> Result<Vec<Entry>, ParserError> {
+async fn read_feed(url: String) -> Result<Vec<Entry>, ParserError> {
     let response = reqwest::get(url).await?.text().await?;
     let mut reader = Reader::from_str(&response);
 
