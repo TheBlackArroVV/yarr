@@ -4,10 +4,12 @@ use std::fs::{File, OpenOptions};
 use std::io::Write;
 use std::path::Path;
 use reqwest::Url;
+use crate::file_utils::{config_directory_location, config_file_location};
 
 mod iterator;
 mod feed_parser;
 mod displayer;
+mod file_utils;
 
 fn main() {
     let command = args().nth(1).expect("no command given");
@@ -34,18 +36,16 @@ fn add_link_to_rss_feed(url: Option<String>) {
 }
 
 fn config_file() -> String {
-    let home_directory_path = std::env::var("HOME").expect("no home directory");
-    let config_directory = format!("{}/.config/yarr", home_directory_path);
-    let file_directory = format!("{}/rss_links.yml", config_directory);
+   let file = config_file_location();
 
-    if Path::new(&file_directory).exists() {
-        return file_directory;
+    if Path::new(&file).exists() {
+        return file;
     }
 
-    fs::create_dir_all(&config_directory).unwrap();
+    fs::create_dir_all(config_directory_location()).unwrap();
 
-    File::create(&file_directory)
+    File::create(&file)
         .expect("unable to create file");
 
-    file_directory
+    file
 }
