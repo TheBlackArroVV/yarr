@@ -1,11 +1,12 @@
-## This is a simple rss reader, which I decided to implement to learn Rust
+## This is a simple RSS reader, which I decided to implement to learn Rust
 
 Current available commands:
 
 1. add <link> - will add <link> to list of followed
 2. rss - will render a list of written topics
+3. remove <link> - will remove <link> from the list of followed
 
-Plans for future:
+Plans for the future:
 
-1. Tests
-2. Removing from list
+1. Different colors
+2. Keeping track of what was already read
