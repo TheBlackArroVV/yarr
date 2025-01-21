@@ -1,12 +1,10 @@
-use std::error::Error;
-use std::fs;
+use crate::feed_parser::Entry;
 use crate::{feed_parser, file_utils};
-use crate::feed_parser::{Entry, ParserError};
 
 pub fn iterator() -> Vec<Entry> {
     let mut all_entries: Vec<Entry> = Vec::new();
 
-    match links() {
+    match file_utils::read_file(file_utils::config_file_location()) {
         Ok(links) => {
             for link in links {
                 match feed_parser::feed_parser(link) {
@@ -34,21 +32,69 @@ fn sort_entries(mut entries: Vec<Entry>) -> Vec<Entry> {
     entries
 }
 
-fn links() -> Result<Vec<String>, Box<dyn Error>> {
-    let file = file_utils::config_file_location();
+#[cfg(test)]
+mod tests {
+    use crate::{
+        feed_parser::{Author, Entry},
+        iterator::sort_entries,
+    };
 
-    let data: Vec<u8> = fs::read(file).unwrap();
+    #[test]
+    fn sorts_by_updated() {
+        let entries: Vec<Entry> = vec![
+            Entry {
+                title: "a".to_string(),
+                link: "A".to_string(),
+                updated: "19.01.2025".to_string(),
+                author: Author {
+                    name: "A".to_string(),
+                },
+            },
+            Entry {
+                title: "b".to_string(),
+                link: "A".to_string(),
+                updated: "13.01.2025".to_string(),
+                author: Author {
+                    name: "A".to_string(),
+                },
+            },
+            Entry {
+                title: "c".to_string(),
+                link: "A".to_string(),
+                updated: "22.01.2025".to_string(),
+                author: Author {
+                    name: "A".to_string(),
+                },
+            },
+        ];
 
-    match String::from_utf8(data) {
-        Ok(data) => {
-            let mut links: Vec<String> = Vec::new();
-            for line in data.lines() {
-                links.push(line.to_string());
-            }
-            Ok(links)
-        }
-        Err(error) => {
-            Err(ParserError::from(error))
-        }
+        let sorted_entries: Vec<Entry> = vec![
+            Entry {
+                title: "b".to_string(),
+                link: "A".to_string(),
+                updated: "13.01.2025".to_string(),
+                author: Author {
+                    name: "A".to_string(),
+                },
+            },
+            Entry {
+                title: "a".to_string(),
+                link: "A".to_string(),
+                updated: "19.01.2025".to_string(),
+                author: Author {
+                    name: "A".to_string(),
+                },
+            },
+            Entry {
+                title: "c".to_string(),
+                link: "A".to_string(),
+                updated: "22.01.2025".to_string(),
+                author: Author {
+                    name: "A".to_string(),
+                },
+            },
+        ];
+
+        assert_eq!(sort_entries(entries), sorted_entries);
     }
 }
