@@ -19,6 +19,7 @@ fn main() {
         "rss" => displayer::print_rss_feed(),
         "add" => add_link_to_rss_feed(config_file(), options),
         "remove" => remove_link_from_rss_feed(config_file(), options),
+        "help" => displayer::help_menu(),
         _ => println!("Invalid input"),
     }
 }

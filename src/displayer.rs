@@ -12,3 +12,13 @@ pub fn print_rss_feed() {
         println!();
     }
 }
+
+pub fn help_menu() {
+    println!("Help menu");
+    println!("-----------------");
+    println!("Available commands:");
+    println!("add _url_");
+    println!("remove _url_");
+    println!("help");
+    println!("Thanks for using my rss reader!");
+}
