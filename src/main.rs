@@ -20,6 +20,7 @@ fn main() {
         "add" => add_link_to_rss_feed(config_file(), options),
         "remove" => remove_link_from_rss_feed(config_file(), options),
         "help" => displayer::help_menu(),
+        "version" => println!("0.1.0"),
         _ => println!("Invalid input"),
     }
 }
